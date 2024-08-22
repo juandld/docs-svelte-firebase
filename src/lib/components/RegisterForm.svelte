@@ -23,8 +23,8 @@
     } 
 </script>
 
-<div class="card variant-filled w-2/3 p-4">
-	<form action="">
+<div class="card variant-ghost-surface w-full p-4 flex justify-center items-center flex-col">
+	<form action="" class="grid grid-cols-1 gap-2">
 		<label class="label">
 			<span>Email</span>
 			<input class="input text-white" type="email" id="email" bind:value={email} />
@@ -37,13 +37,12 @@
 			>Password
 			<input class="input text-white" type="password" id="password" bind:value={password} />
 		</label>
-        <label class="label"
-			>Confirm Password
-			<input class="input text-white" type="password" id="password2" bind:value={password2} />
+		<label class="label"
+		>Confirm Password
+		<input class="input text-white" type="password" id="password2" bind:value={password2} />
 		</label>
-
-		<button class="btn variant-filled-surface m-2" on:click={submit}
-			>Register
-		</button>
 	</form>
+	<button class="btn variant-filled-surface m-2" on:click={submit}
+		>Register
+	</button>
 </div>

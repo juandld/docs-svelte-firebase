@@ -29,7 +29,9 @@
 		<!-- App Bar -->
 		<AppBar>
 			<svelte:fragment slot="lead">
-				<strong class="text-xl uppercase">Skeleton</strong>
+				<a href="/">
+					<strong class="text-xl uppercase">Skeleton</strong>
+				</a>
 			</svelte:fragment>
 			<svelte:fragment>
 				<a
@@ -43,7 +45,7 @@
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
 				<a href="register">Register</a>
-				<a href="login">Login</a>
+				<a href="#">Login</a>
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
