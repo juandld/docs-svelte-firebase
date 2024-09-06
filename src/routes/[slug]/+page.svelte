@@ -1,36 +1,22 @@
-<script>
-    import { page } from '$app/stores';
-    import { db } from '$lib/firebase/config';
-    import { getDoc, doc } from "firebase/firestore";
-    import { onMount } from 'svelte';
+<script lang="ts">    
+  export let data;
 
-    // Assuming slug is a URL parameter representing the username
-    let username = $page.params.slug || '';
-    const docRef = doc(db, "users", username);
-
-    let user = null;
-    let error = null;
-
-    async function fetchUserByUsername() {
-        try {
-            const querySnapshot = await getDoc(docRef);
-            user = querySnapshot.data();
-            console.log("User data:", user);
-            
-        } catch (err) {
-            error = err.message; // Store the error message for display
-            console.error("Error fetching user data:", err);
-            // Consider setting an error state or showing an error message to the user
-        }
-    }
-
-    onMount(fetchUserByUsername);
 </script>
 
 <!-- Display user data or error message -->
-{#if user}
+{#if data.user}
     <div>User found:</div>
-    <pre>{JSON.stringify(user, null, 2)}</pre>
+    <pre>{JSON.stringify(data.user, null, 2)}</pre>
 {:else if error}
     <div>Error: {error}</div>
+{/if}
+
+<!-- Display docs -->
+ {#if data.docs.length > 0}
+    {#each data.docs as doc}
+        <div>{doc.title}</div>
+        <div>{doc.contents}</div>
+    {/each}
+{:else}
+    <div>No docs found for this user, are you sure you have the right username?</div>
 {/if}
