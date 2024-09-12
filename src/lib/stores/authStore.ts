@@ -1,9 +1,13 @@
-// src/stores/authStore.ts
 import { writable } from 'svelte/store';
+import type { User } from '../types/user';
 
-const initialState = {
-  currentUser: null,
-  isLoading: true,
+type AuthState = {
+  currentUser: User | null;
 };
 
-export const authStore = writable(initialState);
+export const authStore = writable<AuthState>({
+  currentUser: null
+});
+
+
+

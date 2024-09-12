@@ -1,5 +1,5 @@
 import { auth } from '$lib/util/firebase';
-import { signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, sendPasswordResetEmail, updateEmail, updatePassword, getAuth } from 'firebase/auth';
+import { signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, sendPasswordResetEmail, updateEmail, updatePassword } from 'firebase/auth';
 
 type AuthHandlers = {
     login: (email: string, password: string) => Promise<void>
@@ -13,10 +13,14 @@ type AuthHandlers = {
 export const authHandlers = {
     login: async (email: string, password: string) => {
         return await signInWithEmailAndPassword(auth, email, password)
-        
     },
     signup: async (email: string, password: string) => {
-        return await createUserWithEmailAndPassword(auth, email, password)
+        // Create a new user Firebase Auth
+        const authR = await createUserWithEmailAndPassword(auth, email, password)
+        
+        const uID = authR.user.uid
+        // Create a new user in the database using the uID
+        return uID
     },
     logout: async () => {
         return await signOut(auth)

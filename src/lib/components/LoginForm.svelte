@@ -2,6 +2,9 @@
 	import { popup } from '@skeletonlabs/skeleton';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
 	import { authHandlers } from '$lib/util/authHandlers';
+	import { getDocwID } from '$lib/util/queryHandle';
+	import { authStore } from '$lib/stores/authStore';
+	import { goto } from '$app/navigation';
 
 	const popupClick: PopupSettings = {
 		event: 'click',
@@ -9,16 +12,51 @@
 		placement: 'bottom'
 	};
 
-	let message = 'hello world';
+	interface User {
+		uid: string;
+		email: string | null;
+	}
+
+	interface DbResponse {
+		username: string;
+		fullName: string;
+		uid: string;
+		email: string;
+	}
+
+	let message = '';
 	let email = '';
 	let password = '';
 	let error = false;
 
 	const submit = async () => {
-		const response = await authHandlers.login(email, password);
-		console.log(response);
+		if (email === '' || password === '') {
+			error = true;
+			message = 'Please enter an email and password';
+			return;
+		}
+
+		try {
+			// Loging in with email and password
+			const response = await authHandlers.login(email, password);
+			//Updating authStore for state management
+			authStore.set({ currentUser: { uid: response.user.uid, email: response.user.email } });
+			// Get the user's username from the database
+			const dbResponse = await getDocwID(response.user.uid);
+			// Redirect to user profile
+			if (!dbResponse) {
+				const redirect = dbResponse
+				console.log(redirect)
+				goto(`/${redirect}`);
+			}
+		} catch (error) {
+			// Handle Firebase Auth errors
+			if (error instanceof Error) {
+				// Type guard to ensure error is an Error object
+				message = error.message;
+			}
+		}
 	};
-			
 </script>
 
 <div class="card variant-ghost-surface p-4 flex justify-center items-center flex-col h-full">
@@ -38,8 +76,10 @@
 			<span>Password</span>
 			<input class="input" type="password" id="password" bind:value={password} />
 		</label>
-		<button class="btn variant-filled-primary" use:popup={popupClick} on:click|preventDefault={submit}
-			>Submit</button
+		<button
+			class="btn variant-filled-primary"
+			use:popup={popupClick}
+			on:click|preventDefault={submit}>Submit</button
 		>
 		{#if !error}
 			<div class="card p-4 variant-filled-error" data-popup="popupClick">

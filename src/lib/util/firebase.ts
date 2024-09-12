@@ -2,8 +2,6 @@
 import { deleteApp, getApp, getApps, initializeApp } from "firebase/app";
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 import { getAuth, connectAuthEmulator } from 'firebase/auth'
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -28,7 +26,7 @@ if (!getApps().length) {
 const db = getFirestore(firebaseApp)
 const auth = getAuth(firebaseApp)
 
-// If the emulator is running and in development, connect to emulators
+// If in development mode, connect to emulators
 if (process.env.NODE_ENV === 'development') {
     connectFirestoreEmulator(db, '127.0.0.1', 8080);
     connectAuthEmulator(auth, 'http://127.0.0.1:9099');
