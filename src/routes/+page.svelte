@@ -1,17 +1,4 @@
 <script>
-	import {db} from '$lib/firebase/config'
-	import { collection, getDocs } from 'firebase/firestore';
-	import { onMount } from 'svelte';
-
-	onMount(async () => {
-		console.log("mounted");
-		
-		const querySnapshot = await getDocs(collection(db, "posts"));
-		querySnapshot.forEach((doc) => {
-			console.log(`${doc.id} => ${doc.data()}`);
-		});
-	})
-
 	let featured = [1, 2, 3, 4]
 </script>
 

@@ -1,6 +1,13 @@
 <script lang="ts">
 	import '../app.postcss';
 	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
+	import { initializeStores } from '@skeletonlabs/skeleton';
+	import { Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
+
+	//My components
+	import AuthButtons from '$lib/components/AuthButtons.svelte';
+	import LoginForm from '$lib/components/LoginForm.svelte';
+
 
 	// Highlight JS
 	import hljs from 'highlight.js/lib/core';
@@ -21,6 +28,12 @@
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
+
+	initializeStores();
+
+	let loggedIn = false;
+	let user = null;
+	const drawerStore = getDrawerStore();
 </script>
 
 <!-- App Shell -->
@@ -43,12 +56,16 @@
 					GitHub
 				</a>
 			</svelte:fragment>
+
 			<svelte:fragment slot="trail">
-				<a href="register">Register</a>
-				<a href="#">Login</a>
+				<AuthButtons />
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
+
+	<Drawer position="right">
+		<LoginForm/>
+	</Drawer>
 	<!-- Page Route Content -->
 	<slot />
 </AppShell>

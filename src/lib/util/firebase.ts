@@ -1,9 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { deleteApp, getApp, getApps, initializeApp } from "firebase/app";
-import { getFirestore } from 'firebase/firestore'
-import { getAuth } from 'firebase/auth'
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
+import { getAuth, connectAuthEmulator } from 'firebase/auth'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -12,7 +10,7 @@ const firebaseConfig = {
     projectId: import.meta.env.VITE_PROJECT_ID,
     storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
     messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
-    appId: import.meta.env.VITE_APP_ID
+    appId: import.meta.env.VITE_APP_ID,
 };
 
 // Initialize Firebase
@@ -27,5 +25,11 @@ if (!getApps().length) {
 
 const db = getFirestore(firebaseApp)
 const auth = getAuth(firebaseApp)
+
+// If in development mode, connect to emulators
+if (process.env.NODE_ENV === 'development') {
+    connectFirestoreEmulator(db, '127.0.0.1', 8080);
+    connectAuthEmulator(auth, 'http://127.0.0.1:9099');
+}
 
 export { db, auth };
