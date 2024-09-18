@@ -5,8 +5,8 @@
 	import { onAuthStateChanged } from 'firebase/auth';
 	import { browser } from '$app/environment';
 	
-	
 	onMount(() => {
+		console.log("1");
 		const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
 			if (firebaseUser) {
 				console.log("Congrats, logged in!");
@@ -22,20 +22,22 @@
 			if (
 				browser &&
 				!$authStore.currentUser &&
-				!$authStore.isLoading &&
 				window.location.pathname !== '/'
 			) {
 				console.log("2");
 				//window.location.href = '/';
 				
-				console.log($authStore.currentUser, $authStore.isLoading);
+				console.log($authStore.currentUser);
 			}
 		});
 		return unsubscribe;
 	});
+
+
 </script>
 
-<main class="mainContainer">
+<main class="mainContainer flex justify-center flex-col">
+	<h2 class="h2">This is the layout</h2>
 	<slot />
 </main>
 
