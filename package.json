@@ -39,6 +39,7 @@
   "type": "module",
   "dependencies": {
     "@floating-ui/dom": "1.6.10",
+    "carta-md": "^4.4.5",
     "firebase": "^10.13.0",
     "highlight.js": "11.10.0"
   }

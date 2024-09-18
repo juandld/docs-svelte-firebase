@@ -2,7 +2,7 @@ import { db } from "$lib/util/firebase";
 import { collection,  getDocs,  query, where, doc, getDoc } from "firebase/firestore";
 
 
-export const getUserwUsername = async (username: string) => {
+export const findUserByUsername = async (username: string) => {
     const usersRef = collection(db, 'users');
     const q = query(usersRef, where('username', '==', username));
     try {
@@ -26,7 +26,7 @@ export const getUserwUsername = async (username: string) => {
     }
 }
 
-export const getDocwID = async (uID: string) => {
+export const getUserByID = async (uID: string) => {
     const docRef = doc(db, 'users', uID); 
     try {
         const response = await getDoc(docRef);

@@ -3,7 +3,7 @@
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
 	import { authStore } from '$lib/stores/authStore';
 	import { goto } from '$app/navigation';
-	import { authHandlers } from '$lib/util/authHandlers';
+	import { authHandlers } from '$lib/util/authHandle';
 	import { createUser } from '$lib/util/registerHandle';
 
 	const popupClick: PopupSettings = {

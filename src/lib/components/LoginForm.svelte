@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { popup } from '@skeletonlabs/skeleton';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
-	import { authHandlers } from '$lib/util/authHandlers';
-	import { getDocwID } from '$lib/util/queryHandle';
+	import { authHandlers } from '$lib/util/authHandle';
+	import { getUserByID } from '$lib/util/userQueryHandle';
 	import { authStore } from '$lib/stores/authStore';
 	import { goto } from '$app/navigation';
 
