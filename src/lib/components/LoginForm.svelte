@@ -42,7 +42,7 @@
 			//Updating authStore for state management
 			authStore.set({ currentUser: { uid: response.user.uid, email: response.user.email } });
 			// Get the user's username from the database
-			const dbResponse = await getDocwID(response.user.uid);
+			const dbResponse = await getUserByID(response.user.uid);
 			// Redirect to user profile
 			if (!dbResponse) {
 				const redirect = dbResponse
