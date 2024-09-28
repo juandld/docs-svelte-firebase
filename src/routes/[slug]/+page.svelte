@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
 	export let data: {
 		email: string;
 		username: string;
@@ -26,7 +27,7 @@
         <div class="flex flex-col">
 
             <h2 class="h2">This user has no posts</h2>
-            <button class="btn variant-filled">Write a new post</button>
+            <button class="btn variant-filled" on:click={() => goto("work")}>Write a new post</button>
         </div>
 	{/if}
 {:else}

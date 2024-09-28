@@ -1,16 +1,7 @@
 <script lang="ts">
-	import { popup } from '@skeletonlabs/skeleton';
-	import type { PopupSettings } from '@skeletonlabs/skeleton';
-	import { authStore } from '$lib/stores/authStore';
-	import { goto } from '$app/navigation';
 	import { authHandlers } from '$lib/util/authHandle';
-	import { createUser } from '$lib/util/registerHandle';
-
-	const popupClick: PopupSettings = {
-		event: 'click',
-		target: 'popupClick',
-		placement: 'bottom'
-	};
+	import RegPopup from '$lib/components/mini/RegPopup.svelte';
+	import { goto } from '$app/navigation';
 
 	let email = '';
 	let username = '';
@@ -32,19 +23,10 @@
 
 		try {
 			// Sign up with email and password auth service
-			const responseAuth = await authHandlers.signup(email, password);
-			const uID = responseAuth;
-			// Create a new user in the database
-			await createUser(uID, email, username, fullName);
-			// Update authStore for state management
-			authStore.update(() => ({
-				currentUser: {
-					email: email,
-					uid: uID
-				}
-			}));
-			// Redirect to user profile
-			goto(`/${username}`);
+			const responseAuth = await authHandlers.signup(email, password, username, fullName);
+			if (responseAuth) {
+				goto(username);
+			}
 		} catch (error) {
 			if (error instanceof Error) {
 				console.log(error.message);
@@ -58,45 +40,73 @@
 					case 'Firebase: Error (auth/weak-password).':
 						popupMessage = 'Password is too weak';
 						break;
+					case 'Username already exists':
+						console.log('Username already exists');
+						popupMessage = 'Username is already in use';
+						break;
 					default:
-						popupMessage = 'An error occurred during signup: ' + error.message;
+						popupMessage = error.message;
 				}
-			} else {
-				popupMessage = 'An unknown error occurred';
 			}
 		}
 	};
 </script>
 
+{#if popupMessage}
+	<RegPopup {popupMessage} />
+{/if}
 <div class="card variant-ghost-surface w-full p-4 flex justify-center items-center flex-col">
-	<form class="grid grid-cols-1 gap-2">
+	<form class="grid grid-cols-1 gap-2" on:submit|preventDefault={submit}>
 		<label class="label">
 			<span>Email</span>
-			<input class="input text-white" type="email" bind:value={email} />
+			<input
+				class="input text-white"
+				type="email"
+				name="email"
+				autocomplete="email"
+				bind:value={email}
+			/>
 		</label>
 		<label class="label">
 			<span>Username</span>
-			<input class="input text-white" type="text" bind:value={username} />
+			<input
+				class="input text-white"
+				type="text"
+				name="username"
+				autocomplete="username"
+				bind:value={username}
+			/>
 		</label>
 		<label class="label">
 			<span>Name</span>
-			<input class="input text-white" type="text" bind:value={fullName} />
+			<input
+				class="input text-white"
+				type="text"
+				name="fullname"
+				autocomplete="name"
+				bind:value={fullName}
+			/>
 		</label>
 		<label class="label">
 			<span>Password</span>
-			<input class="input text-white" type="password" bind:value={password} />
+			<input
+				class="input text-white"
+				type="password"
+				name="new-password"
+				autocomplete="new-password"
+				bind:value={password}
+			/>
 		</label>
 		<label class="label">
 			<span>Confirm Password</span>
-			<input class="input text-white" type="password" bind:value={password2} />
+			<input
+				class="input text-white"
+				type="password"
+				name="confirm-password"
+				autocomplete="new-password"
+				bind:value={password2}
+			/>
 		</label>
+		<button class="btn variant-filled-surface m-2" type="submit"> Register </button>
 	</form>
-	<button class="btn variant-filled-surface m-2" on:click={submit} use:popup={popupClick}>
-		Register
-	</button>
-</div>
-
-<div class="card p-4 variant-filled-error" data-popup="popupClick">
-	<p>{popupMessage}</p>
-	<div class="arrow variant-filled-error" />
 </div>

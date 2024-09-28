@@ -1,38 +1,87 @@
+import { authStore } from '$lib/stores/authStore';
 import { auth } from '$lib/util/firebase';
+import { db } from '$lib/util/firebase';
+import { doc, runTransaction } from 'firebase/firestore';
 import { signInWithEmailAndPassword as signInByEmailAndPassword, createUserWithEmailAndPassword as createUserByEmailAndPassword } from 'firebase/auth';
 import { signOut, sendPasswordResetEmail, updateEmail, updatePassword } from 'firebase/auth';
 
-type AuthHandlers = {
-    login: (email: string, password: string) => Promise<void>
-    signup: (email: string, password: string) => Promise<void>
-    logout: () => Promise<void>
-    resetPassword: (email: string) => Promise<void>
-    updateEmail: (email: string) => Promise<void>
-    updatePassword: (password: string) => Promise<void>
-}
-
 export const authHandlers = {
     login: async (email: string, password: string) => {
-        return await signInByEmailAndPassword(auth, email, password)
+        try {
+            const data = await signInByEmailAndPassword(auth, email, password)
+            authStore.update(() => ({
+                uid: "example",
+                email: email
+            }));
+            return data
+        } catch (error) {
+            throw error
+        }
     },
-    signup: async (email: string, password: string) => {
-        // Create a new user Firebase Auth
-        const authR = await createUserByEmailAndPassword(auth, email, password)
-        
-        const uID = authR.user.uid
-        // Create a new user in the database using the uID
-        return uID
+    signup: async (email: string, password: string, username: string, fullName: string) => {
+        const usernameRef = doc(db, 'usernames', username);
+        try {
+            // First, run the transaction to check if the username is available
+            const isUsernameAvailable = await runTransaction(db, async (transaction) => {
+                const sfDoc = await transaction.get(usernameRef);
+    
+                if (sfDoc.exists()) {
+                    throw new Error('Username already exists');
+                }
+                // If username does not exist, allow the process to proceed
+                return true;
+            });
+    
+            if (isUsernameAvailable) {
+                // Now create the user with Firebase Authentication
+                const authR = await createUserByEmailAndPassword(auth, email, password);
+                const uID = authR.user.uid;
+    
+                // If the email is valid and user is created, add both username and user to Firestore
+                await runTransaction(db, async (transaction) => {
+                    // Add new username to the username collection
+                    transaction.set(usernameRef, { username: username });
+                    // Add new user to the users collection
+                    transaction.set(doc(db, 'users', uID), { email: email, username: username, fullName: fullName });
+                });
+    
+                return true;
+            }
+        } catch (error) {
+            throw error
+        }
     },
+    
     logout: async () => {
-        return await signOut(auth)
+        try {
+            authStore.update(() => ({
+                uid: undefined,
+                email: undefined
+            }));
+            return await signOut(auth)
+        } catch (error) {
+            throw error
+        }
     },
     resetPassword: async (email: string) => {
-        return await sendPasswordResetEmail(auth, email)
+        try {
+            return await sendPasswordResetEmail(auth, email);
+        } catch (error) {
+            throw error;
+        }
     },
     updateEmail: async (email: string) => {
-        return await updateEmail(auth.currentUser!, email)
+        try {
+            return await updateEmail(auth.currentUser!, email);
+        } catch (error) {
+            throw error;
+        }
     },
     updatePassword: async (password: string) => {
-        return await updatePassword(auth.currentUser!, password)
+        try {
+            return await updatePassword(auth.currentUser!, password);
+        } catch (error) {
+            throw error;
+        }
     }
 }

@@ -3,7 +3,6 @@
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
 	import { authHandlers } from '$lib/util/authHandle';
 	import { getUserByID } from '$lib/util/userQueryHandle';
-	import { authStore } from '$lib/stores/authStore';
 	import { goto } from '$app/navigation';
 
 	const popupClick: PopupSettings = {
@@ -11,18 +10,6 @@
 		target: 'popupClick',
 		placement: 'bottom'
 	};
-
-	interface User {
-		uid: string;
-		email: string | null;
-	}
-
-	interface DbResponse {
-		username: string;
-		fullName: string;
-		uid: string;
-		email: string;
-	}
 
 	let message = '';
 	let email = '';
@@ -39,14 +26,12 @@
 		try {
 			// Loging in with email and password
 			const response = await authHandlers.login(email, password);
-			//Updating authStore for state management
-			authStore.set({ currentUser: { uid: response.user.uid, email: response.user.email } });
 			// Get the user's username from the database
 			const dbResponse = await getUserByID(response.user.uid);
 			// Redirect to user profile
 			if (!dbResponse) {
-				const redirect = dbResponse
-				console.log(redirect)
+				const redirect = dbResponse;
+				console.log(redirect);
 				goto(`/${redirect}`);
 			}
 		} catch (error) {

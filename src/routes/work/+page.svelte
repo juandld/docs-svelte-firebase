@@ -23,6 +23,8 @@
 
 	let value: string = '';
 	let docID: string = 'examplusMaximus';
+	let title: string = 'Untitled masterpiece';
+	let topics = ['topic1', 'topic2', 'topic3'];
 	let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 	let lastSavedValue: string | null = null; // Keep track of the last saved value
 
@@ -36,7 +38,7 @@
 		debounceTimer = setTimeout(() => {
 			// Only save if the content has changed
 			if (content !== lastSavedValue) {
-				chamofileCRUD.saveChamofile(docID, content);
+				chamofileCRUD.saveChamofile(docID, content, title, topics);
 				lastSavedValue = content; // Update the last saved value
 			} else {
 				return;
@@ -74,7 +76,7 @@
 		} else if (localData) {
 			value = localData.content;
 			// Sync the local data to Firebase
-			await chamofileCRUD.saveChamofile(docID, value);
+			await chamofileCRUD.saveChamofile(docID, value, title, topics);
 			lastSavedValue = value; // Initialize last saved value
 		} else if (firebaseData) {
 			value = firebaseData.content;
@@ -96,4 +98,21 @@
 	}
 </script>
 
-<MarkdownEditor {carta} theme="github" mode="tabs" bind:value />
+<div>
+	<div class="flex gap-2">
+		<label class="w-1/2">
+			<input class="input" type="text" bind:value={title} />
+		</label>
+		<select name="topic" id="">
+			{#each topics as topic}
+				<option value={topic}>{topic}</option>
+			{/each}
+		</select>
+		<!-- <select name="versions" id="">
+			{#each versions as version}
+				<option value={version}>{version}</option>
+			{/each}
+		</select> -->
+	</div>
+	<MarkdownEditor {carta} theme="github" mode="tabs" bind:value />
+</div>
