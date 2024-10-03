@@ -13,18 +13,6 @@
 		border: 1px solid $border;
 		border-radius: 0.5rem;
 
-		h1 {
-			font-size: 2rem;
-		}
-
-		h2 {
-			font-size: 1.75rem;
-		}
-
-		h3 {
-			font-size: 1.5rem;
-		}
-
 		&:focus-within {
 			outline: 2px solid $accent;
 		}
@@ -34,10 +22,123 @@
 			flex-grow: 1;
 		}
 
-		.carta-input,
+		.carta-input {
+			min-height: 300px;
+
+			textarea {
+				border-radius: 5px;
+				/* Add rounded corners if needed */
+			}
+		}
+
+		// Renderer styles
 		.carta-renderer {
-			min-height: 120px;
-			max-height: 160px;
+			overflow: auto;
+			font-size: 16px;
+
+
+			/* Headings */
+			h1 {
+				font-size: 1.5rem;
+				color: #ffffff;
+				margin-top: 24px;
+				margin-bottom: 16px;
+				border-bottom: 2px solid #374151;
+			}
+
+			h2 {
+				font-size: 1.25rem;
+				color: #ffffff;
+				margin-top: 20px;
+				margin-bottom: 12px;
+			}
+
+			h3 {
+				font-size: 1.15rem;
+				color: #ffffff;
+				margin-top: 16px;
+				margin-bottom: 10px;
+			}
+
+			/* Links */
+			a {
+				color: #61dafb;
+				text-decoration: none;
+			}
+
+			a:hover {
+				text-decoration: underline;
+			}
+
+			code {
+				background-color: $background-light;
+				color: #ffffff;
+				padding: 4px 6px;
+				border-radius: 4px;
+				font-family: 'Fira Code', monospace;
+			}
+
+			/* Lists */
+			ul {
+				list-style-type: disc;
+				margin: 16px 0;
+				padding-left: 40px;
+			}
+			ol {
+				list-style-type: decimal;
+				margin: 16px 0;
+				padding-left: 40px;
+			}
+
+			li {
+				margin-bottom: 8px;
+			}
+
+			/* Blockquotes */
+			blockquote {
+				color: #9ca3af;
+				border-left: 4px solid #374151;
+				padding-left: 16px;
+				margin: 16px 0;
+			}
+
+			/* Images */
+			img {
+				max-width: 100%;
+				border-radius: 8px;
+				margin-top: 16px;
+			}
+
+			/* Tables */
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				margin: 16px 0;
+			}
+
+			th,
+			td {
+				padding: 12px;
+				border: 1px solid #374151;
+			}
+
+			th {
+				background-color: #374151;
+				color: #ffffff;
+			}
+
+			td {
+				background-color: #1e1e1e;
+			}
+
+			/* Horizontal Rule */
+			hr {
+				border: 0;
+				border-top: 1px solid #374151;
+				margin: 24px 0;
+			}
+
+			min-height: 300px;
 			overflow: auto;
 		}
 
@@ -73,11 +174,11 @@
 		}
 
 		.carta-toolbar-left {
-			& > *:first-child {
+			&>*:first-child {
 				border-top-left-radius: 0.5rem;
 			}
 
-			& > * {
+			&>* {
 				padding-left: 1rem;
 				padding-right: 1rem;
 				font-size: 0.95rem;
@@ -116,6 +217,7 @@
 				padding-right: 6px;
 
 				margin-top: 2px;
+
 				&:first-child {
 					margin-top: 0;
 				}

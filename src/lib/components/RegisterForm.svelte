@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { authHandlers } from '$lib/util/authHandle';
-	import RegPopup from '$lib/components/mini/RegPopup.svelte';
+	import AuthPopup from '$lib/components/mini/AuthPopup.svelte';
 	import { goto } from '$app/navigation';
 
 	let email = '';
@@ -53,7 +53,7 @@
 </script>
 
 {#if popupMessage}
-	<RegPopup {popupMessage} />
+	<AuthPopup {popupMessage} />
 {/if}
 <div class="card variant-ghost-surface w-full p-4 flex justify-center items-center flex-col">
 	<form class="grid grid-cols-1 gap-2" on:submit|preventDefault={submit}>

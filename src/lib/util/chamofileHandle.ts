@@ -25,7 +25,8 @@ const getChamofilewID = async (uID: string) => {
 const saveChamofile = async (uID: string, content: string, title: string, topics: string[]) => {
     const chamofileDocRef = doc(db, 'chamofiles', uID);
     const versionCollectionRef = collection(chamofileDocRef, 'versions');
-
+    console.log('trying to save chamofile');
+    
     try {
         // Use a transaction to save the new version and update the main document
         await runTransaction(db, async (transaction) => {
@@ -68,6 +69,7 @@ const saveChamofile = async (uID: string, content: string, title: string, topics
                 });
 
             } else {
+                console.log("creating new version");
                 // Create a new chamofile document if it doesn't exist
                 await transaction.set(chamofileDocRef, {
                     createdAt: Timestamp.now(),
@@ -79,6 +81,7 @@ const saveChamofile = async (uID: string, content: string, title: string, topics
 
                 // Add the initial version to the 'versions' subcollection
                 await transaction.set(doc(versionCollectionRef), {
+                    
                     content: content,
                     updatedAt: Timestamp.now(),
                     version: 1

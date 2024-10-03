@@ -18,7 +18,6 @@
 	const carta = new Carta({
 		sanitizer: DOMPurify.sanitize,
 		extensions: [emoji(), code()],
-		historyOptions: {}
 	});
 
 	let value: string = '';
@@ -98,7 +97,7 @@
 	}
 </script>
 
-<div>
+<div class="">
 	<div class="flex gap-2">
 		<label class="w-1/2">
 			<input class="input" type="text" bind:value={title} />
@@ -114,5 +113,8 @@
 			{/each}
 		</select> -->
 	</div>
-	<MarkdownEditor {carta} theme="github" mode="tabs" bind:value />
+	<div class="">
+
+		<MarkdownEditor {carta} theme="github" mode="tabs" bind:value />
+	</div>
 </div>

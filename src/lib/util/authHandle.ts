@@ -3,14 +3,15 @@ import { auth } from '$lib/util/firebase';
 import { db } from '$lib/util/firebase';
 import { doc, runTransaction } from 'firebase/firestore';
 import { signInWithEmailAndPassword as signInByEmailAndPassword, createUserWithEmailAndPassword as createUserByEmailAndPassword } from 'firebase/auth';
-import { signOut, sendPasswordResetEmail, updateEmail, updatePassword } from 'firebase/auth';
+import { signOut, sendPasswordResetEmail, updateEmail, updatePassword, onAuthStateChanged } from 'firebase/auth';
 
 export const authHandlers = {
     login: async (email: string, password: string) => {
         try {
             const data = await signInByEmailAndPassword(auth, email, password)
             authStore.update(() => ({
-                uid: "example",
+                uid: data.user.uid,
+                isLoading: false,
                 email: email
             }));
             return data
@@ -56,6 +57,7 @@ export const authHandlers = {
         try {
             authStore.update(() => ({
                 uid: undefined,
+                isLoading: true,
                 email: undefined
             }));
             return await signOut(auth)
@@ -80,6 +82,18 @@ export const authHandlers = {
     updatePassword: async (password: string) => {
         try {
             return await updatePassword(auth.currentUser!, password);
+        } catch (error) {
+            throw error;
+        }
+    },
+    authstatus: (onUserChanged) => {
+        // No need for async/await here since onAuthStateChanged is synchronous
+        try {
+            const unsubscribe = onAuthStateChanged(auth, (user) => {
+                onUserChanged(user); // Call the provided callback with user data
+            });
+
+            return unsubscribe;  // Return the unsubscribe function synchronously
         } catch (error) {
             throw error;
         }

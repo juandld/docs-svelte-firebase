@@ -9,8 +9,12 @@
 	// Change button text based on login state
 	$: {
 		if ($authStore.uid) {
+			console.log($authStore.uid);
 			loggedIn = true;
-			toggleDrawer();
+			if (isDrawerOpen) {
+				drawerStore.close(); // Close the drawer if it's open
+				isDrawerOpen = false;
+			}
 		} else {
 			loggedIn = false;
 		}
@@ -23,7 +27,7 @@
 		bgDrawer: 'variant-filled-surface text-white',
 		bgBackdrop: 'bg-gradient-to-tr from-orange-500/50 via-yellow-500/50 to-orange-500/50',
 		width: 'md:w-[500px] w-full',
-		height: 'max-h-[70%] h-[600px]',
+		height: 'min-h-[400px] max-h-[70%]',
 		padding: 'p-6',
 		rounded: 'rounded-xl'
 	};
@@ -34,17 +38,14 @@
 	});
 
 	// Toggle the drawer
-	const toggleDrawer = () => {
-		if (isDrawerOpen) {
-			drawerStore.close(); // Close the drawer if it's open
-		} else {
-			drawerStore.open(drawerSettings); // Open the drawer if it's closed
-		}
+	const openDrawer = () => {
+		drawerStore.open(drawerSettings); // Open the drawer if it's closed
+		isDrawerOpen = true;
 	};
 </script>
 
 <div>
-	{#if loggedIn}
+	{#if $authStore.uid}
 		<button on:click={authHandlers.logout}>Logout</button>
 	{:else}
 		<a href="register">
@@ -52,7 +53,7 @@
 		</a>
 
 		<a href="#">
-			<button class="btn btn-sm variant-filled" on:click={toggleDrawer}> Login </button>
+			<button class="btn btn-sm variant-filled" on:click={openDrawer}> Login </button>
 		</a>
 	{/if}
 </div>
