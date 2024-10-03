@@ -1,13 +1,14 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import { authHandlers } from '$lib/util/authHandle';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { authStore } from '$lib/stores/authStore';
+	import type { User } from '$lib/types/user';
 
 	onMount(() => {
 		if (browser) {
-			const unsubscribe = authHandlers.authstatus((user) => {
+			const unsubscribe = authHandlers.authstatus((user: User) => {
 				authStore.update((curr) => ({
 					...curr,
 					isLoading: false,

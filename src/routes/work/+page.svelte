@@ -64,7 +64,7 @@
 	onMount(async () => {
 		// Explicitly declare the types
 		const localData: ChamofileData | null = loadFromLocalStorage();
-		const firebaseData: ChamofileData | null = await chamofileCRUD.getChamofilewID(docID);
+		const firebaseData = await chamofileCRUD.getChamofilewID(docID);
 
 		if (localData && firebaseData) {
 			// Ensure timestamps exist and are valid numbers before comparison

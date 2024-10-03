@@ -10,9 +10,11 @@ export const authHandlers = {
         try {
             const data = await signInByEmailAndPassword(auth, email, password)
             authStore.update(() => ({
-                uid: data.user.uid,
+                currentUser: {
+                    uid: data.user.uid,
+                    email: email  
+                },
                 isLoading: false,
-                email: email
             }));
             return data
         } catch (error) {
@@ -56,9 +58,11 @@ export const authHandlers = {
     logout: async () => {
         try {
             authStore.update(() => ({
-                uid: undefined,
+                currentUser: {
+                    uid: null,
+                    email: null
+                },
                 isLoading: true,
-                email: undefined
             }));
             return await signOut(auth)
         } catch (error) {
@@ -86,7 +90,7 @@ export const authHandlers = {
             throw error;
         }
     },
-    authstatus: (onUserChanged) => {
+    authstatus: (onUserChanged: CallableFunction) => {
         // No need for async/await here since onAuthStateChanged is synchronous
         try {
             const unsubscribe = onAuthStateChanged(auth, (user) => {
