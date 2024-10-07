@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { authHandlers } from '$lib/util/authHandle';
+	import { authHandlers } from '$lib/util/auth/authHandle';
 	import AuthPopup from '$lib/components/mini/AuthPopup.svelte';
 	import { goto } from '$app/navigation';
 

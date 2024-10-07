@@ -2,14 +2,13 @@
 	import { getDrawerStore } from '@skeletonlabs/skeleton';
 	import type { DrawerSettings } from '@skeletonlabs/skeleton';
 	import { authStore } from '$lib/stores/authStore';
-	import { authHandlers } from '$lib/util/authHandle';
+	import { authHandlers } from '$lib/util/auth/authHandle';
 
 	let loggedIn = false;
 	let isDrawerOpen = false;
 	// Change button text based on login state
 	$: {
-		if ($authStore.uid) {
-			console.log($authStore.uid);
+		if ($authStore.currentUser) {
 			loggedIn = true;
 			if (isDrawerOpen) {
 				drawerStore.close(); // Close the drawer if it's open
@@ -45,7 +44,7 @@
 </script>
 
 <div>
-	{#if $authStore.uid}
+	{#if $authStore.currentUser}
 		<button on:click={authHandlers.logout}>Logout</button>
 	{:else}
 		<a href="register">

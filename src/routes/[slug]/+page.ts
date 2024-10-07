@@ -2,7 +2,7 @@ export const ssr = false;
 export const csr = true;
 
 import type { Load } from '@sveltejs/kit';
-import { findUserByUsername } from "$lib/util/userQueryHandle";
+import { findUserByUsername } from "$lib/util/auth/userQueryHandle";
 
 export const load: Load = async ({ params }) => {
     const slug  = params.slug;

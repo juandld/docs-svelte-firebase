@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { authHandlers } from '$lib/util/authHandle';
-	import { getUserByID } from '$lib/util/userQueryHandle';
+	import { authHandlers } from '$lib/util/auth/authHandle';
+	import { getUserByID } from '$lib/util/auth/userQueryHandle';
 	import { goto } from '$app/navigation';
 	import AuthPopup from '$lib/components/mini/AuthPopup.svelte';
 

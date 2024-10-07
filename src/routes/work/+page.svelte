@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { chamofileCRUD } from '$lib/util/chamofileHandle';
+	import { chamofileCRUD } from '$lib/util/chamofiles/chamofileHandle';
 
 	import { Carta, MarkdownEditor } from 'carta-md';
 	import { emoji } from '@cartamd/plugin-emoji';
