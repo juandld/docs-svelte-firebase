@@ -12,7 +12,7 @@ export const authHandlers = {
             authStore.update(() => ({
                 currentUser: {
                     uid: data.user.uid,
-                    email: email  
+                    email: email
                 },
                 isLoading: false,
             }));
@@ -43,7 +43,10 @@ export const authHandlers = {
                 // If the email is valid and user is created, add both username and user to Firestore
                 await runTransaction(db, async (transaction) => {
                     // Add new username to the username collection
-                    transaction.set(usernameRef, { username: username });
+                    transaction.set(usernameRef, { 
+                        username: username, 
+                        userID: uID
+                    });
                     // Add new user to the users collection
                     transaction.set(doc(db, 'users', uID), { email: email, username: username, fullName: fullName });
                 });

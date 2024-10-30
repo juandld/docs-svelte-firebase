@@ -1,5 +1,6 @@
-<script>
+<script lang="ts">
 	let featured = [1, 2, 3, 4]
+
 </script>
 
 <div class="container mx-auto flex flex-col justify-center items-center space-y-10 p-4">

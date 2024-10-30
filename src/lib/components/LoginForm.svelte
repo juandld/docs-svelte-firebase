@@ -1,14 +1,16 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import { authHandlers } from '$lib/util/auth/authHandle';
 	import { getUserByID } from '$lib/util/auth/userQueryHandle';
 	import { goto } from '$app/navigation';
 	import AuthPopup from '$lib/components/mini/AuthPopup.svelte';
 
 
-	let popupMessage = '';
-	let email = '';
-	let password = '';
-	let error = false;
+	let popupMessage = $state('');
+	let email = $state('');
+	let password = $state('');
+	let error = $state(false);
 
 	const submit = async () => {
 		if (email === '' || password === '') {
@@ -72,12 +74,12 @@
 		</label>
 		<button
 			class="btn variant-filled-primary"
-			on:click|preventDefault={submit}>Submit</button
+			onclick={preventDefault(submit)}>Submit</button
 		>
 		{#if !error}
 			<div class="card p-4 variant-filled-error" data-popup="popupClick">
 				<p>{popupMessage}</p>
-				<div class="arrow variant-filled-error" />
+				<div class="arrow variant-filled-error"></div>
 			</div>
 		{/if}
 	</form>

@@ -29,7 +29,9 @@ export const findUserByUsername = async (username: string) => {
 
             return null;
         } */
-        return querySnapshot.docs[0].data() ;
+        const userDetails = querySnapshot.docs[0].data();
+        const userID = querySnapshot.docs[0].ref.id;
+        return { userDetails, userID };
     } catch (error) {
         console.error("Error querying documents: ", error);
         throw error;

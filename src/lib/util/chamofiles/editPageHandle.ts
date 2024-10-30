@@ -1,73 +1,93 @@
-import { chamofileCRUD } from '$lib/util/chamofiles/chamofileHandle';
-
+import { versionsCRUD } from "$lib/util/chamofiles/versionsHandle";
+import ChamofileService from "$lib/util/chamofiles/chamofileHandle";
+import type { Timestamp } from "firebase-admin/firestore";
 
 interface ChamofileData {
-    timestamp: number; // or string, depending on your data format
+    timestamp: number;
     content: string;
 }
 
-let value: string = '';
-let docID: string = 'examplusMaximus';
-let title: string = 'Untitled masterpiece';
-let topics = ['topic1', 'topic2', 'topic3'];
-let debounceTimer: ReturnType<typeof setTimeout> | null = null;
-let lastSavedValue: string | null = null; // Keep track of the last saved value
+// Add interface for Firebase data structure
+interface FirebaseData {
+    content: string;
+    createdAt: Timestamp;
+}
 
-// Function to save to Firebase based on debounce
-function debouncedSaveToFirebase(content: string) {
-    if (debounceTimer) {
-        clearTimeout(debounceTimer); // Clear the existing timer
+class ChamofileEditor {
+    private chamofileService: ChamofileService;
+    private debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    private lastSavedValue: string | null = null;
+
+    constructor(dbInstance: any) {
+        this.chamofileService = new ChamofileService();
     }
 
-    // Set a new timeout with a 5-second delay
-    debounceTimer = setTimeout(() => {
-        // Only save if the content has changed
-        if (content !== lastSavedValue) {
-            chamofileCRUD.saveChamofile(docID, content, title, topics);
-            lastSavedValue = content; // Update the last saved value
-        } else {
-            return;
+    debouncedSaveToFirebase(
+        content: string,
+        docID: string,
+        title: string,
+        topics: string[],
+    ): void {
+        if (this.debounceTimer) {
+            clearTimeout(this.debounceTimer);
         }
-    }, 5000); // 5 seconds delay
-}
 
-// Function to save to local storage
-function saveToLocalStorage(content: string) {
-    const timestamp = Date.now();
-    localStorage.setItem('markdownContent', JSON.stringify({ content, timestamp }));
-}
-
-// Function to load from local storage
-function loadFromLocalStorage(): ChamofileData | null {
-    const stored = localStorage.getItem('markdownContent');
-    if (stored) {
-        return JSON.parse(stored);
+        this.debounceTimer = setTimeout(() => {
+            if (content !== this.lastSavedValue) {
+                versionsCRUD.updateVersion(docID, content, title, topics);
+                this.lastSavedValue = content;
+            }
+        }, 5000);
     }
-    return null;
-}
 
-// Load from local storage and sync to/from firebase
-// Explicitly declare the types
-const localData: ChamofileData | null = loadFromLocalStorage();
-const firebaseData = await chamofileCRUD.getChamofilewID(docID);
-
-if (localData && firebaseData) {
-    // Ensure timestamps exist and are valid numbers before comparison
-    if (localData.timestamp && firebaseData.timestamp) {
-        value =
-            localData.timestamp > firebaseData.timestamp ? localData.content : firebaseData.content;
+    saveToLocalStorage(content: string): void {
+        const timestamp = Date.now();
+        localStorage.setItem(
+            "markdownContent",
+            JSON.stringify({ content, timestamp }),
+        );
     }
-} else if (localData) {
-    value = localData.content;
-    // Sync the local data to Firebase
-    await chamofileCRUD.saveChamofile(docID, value, title, topics);
-    lastSavedValue = value; // Initialize last saved value
-} else if (firebaseData) {
-    value = firebaseData.content;
-    lastSavedValue = value; // Initialize last saved value
+
+    loadFromLocalStorage(): ChamofileData | null {
+        console.log("Attempting to load from local storage");
+        const stored = localStorage.getItem("markdownContent");
+        if (stored) {
+            return JSON.parse(stored);
+        }
+        console.log("No stored data found");
+        return null;
+    }
+
+    async loadEditor(
+        docID: string,
+        title: string,
+        topics: string[],
+    ): Promise<{ value: string; lastSavedValue: string | null }> {
+        let value = ""; 
+        const localData = this.loadFromLocalStorage();
+        const firebaseData = await this.chamofileService.fetchByID(docID) as FirebaseData | null;
+
+        if (localData && firebaseData?.createdAt) {
+            // Compare timestamps - ensure firebaseData.createdAt exists
+            value = localData.timestamp > firebaseData.createdAt.toMillis()
+                ? localData.content
+                : firebaseData.content;
+            this.lastSavedValue = value;
+        } else if (localData) {
+            value = localData.content;
+            console.log("Syncing local data to Firebase " + docID);
+            await versionsCRUD.updateVersion(docID, value, title, topics);
+            this.lastSavedValue = value;
+        } else if (firebaseData) {
+            value = firebaseData.content;
+            this.lastSavedValue = value;
+        } else {
+            console.log("No data available from either source");
+            // value is already initialized as empty string
+        }
+
+        return { value, lastSavedValue: this.lastSavedValue };
+    }
 }
 
-// Optional: Handle case where both localData and firebaseData are null/undefined
-if (!value) {
-    console.log('No data available from either source');
-}
+export { ChamofileEditor };

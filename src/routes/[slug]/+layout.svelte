@@ -1,10 +1,15 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { authHandlers } from '$lib/util/authHandle';
+	import { authHandlers } from '$lib/util/auth/authHandle';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { authStore } from '$lib/stores/authStore';
 	import type { User } from '$lib/types/user';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
 
 	
 	onMount(() => {
@@ -28,5 +33,5 @@
 </script>
 
 <main class="p-10">
-	<slot />
+	{@render children?.()}
 </main>

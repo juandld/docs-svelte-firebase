@@ -1,28 +1,18 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { getDrawerStore } from '@skeletonlabs/skeleton';
 	import type { DrawerSettings } from '@skeletonlabs/skeleton';
 	import { authStore } from '$lib/stores/authStore';
 	import { authHandlers } from '$lib/util/auth/authHandle';
 
-	let loggedIn = false;
-	let isDrawerOpen = false;
-	// Change button text based on login state
-	$: {
-		if ($authStore.currentUser) {
-			loggedIn = true;
-			if (isDrawerOpen) {
-				drawerStore.close(); // Close the drawer if it's open
-				isDrawerOpen = false;
-			}
-		} else {
-			loggedIn = false;
-		}
-	}
+	let loggedIn = $state(false);
+	let isDrawerOpen = $state(false);
 
 	const drawerStore = getDrawerStore();
 
 	const drawerSettings: DrawerSettings = {
-		id: 'login-drawer',
+		id: 'login',
 		bgDrawer: 'variant-filled-surface text-white',
 		bgBackdrop: 'bg-gradient-to-tr from-orange-500/50 via-yellow-500/50 to-orange-500/50',
 		width: 'md:w-[500px] w-full',
@@ -41,18 +31,30 @@
 		drawerStore.open(drawerSettings); // Open the drawer if it's closed
 		isDrawerOpen = true;
 	};
+	// Change button text based on login state
+	run(() => {
+		if ($authStore.currentUser) {
+			loggedIn = true;
+			if (isDrawerOpen && $drawerStore.id === 'login') {
+				drawerStore.close(); // Close the drawer if it's open
+				isDrawerOpen = false;
+			}
+		} else {
+			loggedIn = false;
+		}
+	});
 </script>
 
 <div>
 	{#if $authStore.currentUser}
-		<button on:click={authHandlers.logout}>Logout</button>
+		<button onclick={authHandlers.logout}>Logout</button>
 	{:else}
 		<a href="register">
 			<button class="btn btn-sm variant-ghost-surface"> Register </button>
 		</a>
 
 		<a href="#">
-			<button class="btn btn-sm variant-filled" on:click={openDrawer}> Login </button>
+			<button class="btn btn-sm variant-filled" onclick={openDrawer}> Login </button>
 		</a>
 	{/if}
 </div>

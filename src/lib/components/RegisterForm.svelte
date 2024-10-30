@@ -1,14 +1,16 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import { authHandlers } from '$lib/util/auth/authHandle';
 	import AuthPopup from '$lib/components/mini/AuthPopup.svelte';
 	import { goto } from '$app/navigation';
 
-	let email = '';
-	let username = '';
-	let fullName = '';
-	let password = '';
-	let password2 = '';
-	let popupMessage = '';
+	let email = $state('');
+	let username = $state('');
+	let fullName = $state('');
+	let password = $state('');
+	let password2 = $state('');
+	let popupMessage = $state('');
 
 	const submit = async () => {
 		if (password !== password2) {
@@ -56,7 +58,7 @@
 	<AuthPopup {popupMessage} />
 {/if}
 <div class="card variant-ghost-surface w-full p-4 flex justify-center items-center flex-col">
-	<form class="grid grid-cols-1 gap-2" on:submit|preventDefault={submit}>
+	<form class="grid grid-cols-1 gap-2" onsubmit={preventDefault(submit)}>
 		<label class="label">
 			<span>Email</span>
 			<input

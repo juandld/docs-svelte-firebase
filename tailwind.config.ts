@@ -11,7 +11,6 @@ export default {
 		extend: {},
 	},
 	plugins: [
-		require('@tailwindcss/typography'),
 		forms,
 		skeleton({
 			themes: {

@@ -3,7 +3,7 @@
     "configurations": [
 
         {
-            "command": "pnpm run dev",
+            "command": "deno task dev",
             "name": "Run development server",
             "request": "launch",
             "type": "node-terminal"

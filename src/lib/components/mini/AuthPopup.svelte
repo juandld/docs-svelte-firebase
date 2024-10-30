@@ -1,5 +1,5 @@
 <script>
-   export let popupMessage;
+	let { popupMessage } = $props();
 </script>
 
 
