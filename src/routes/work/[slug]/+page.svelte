@@ -1,13 +1,10 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import { onMount } from 'svelte';
 	import { getDrawerStore } from '@skeletonlabs/skeleton';
 	import type { DrawerSettings } from '@skeletonlabs/skeleton';
 	import { page } from '$app/stores';
-	import { db } from "$lib/util/firebase";
+	import { db } from '$lib/util/firebase';
 
-	
 	import { ChamofileEditor } from '$lib/util/chamofiles/editPageHandle'; // Import the OOP ChamofileEditor
 
 	// Initialize ChamofileEditor
@@ -19,31 +16,27 @@
 	let topics = ['topic1', 'topic2', 'topic3'];
 	let value: string = $state('');
 
-
 	// Load from local storage and sync to/from firebase
 	onMount(async () => {
 		const response = await chamofileEditor.loadEditor(docID, title, topics);
 		if (response) {
-			value = response.value;			
+			value = response.value;
 		}
 	});
 
 	// Reactive sync to local and Firebase
-	run(() => {
-		if (value) {
-			chamofileEditor.saveToLocalStorage(value);
-			chamofileEditor.debouncedSaveToFirebase(value, docID, title, topics);
-		}
+	$effect(() => {
+		console.log("Value changed: " + value);
+		
+		chamofileEditor.saveToLocalStorage(value);
+		chamofileEditor.debouncedSaveToFirebase(value, docID, title, topics);
 	});
 
 	// Drawer settings for versions
-	let isDrawerOpen = false;
 	const drawerStore = getDrawerStore();
-	drawerStore.subscribe((state) => {
-		isDrawerOpen = state.open || false;
-	});
+	
 
-	const drawerSettings: DrawerSettings = {
+	const drawerSettingsV: DrawerSettings = {
 		id: 'version',
 		bgDrawer: 'variant-filled-surface text-white',
 		bgBackdrop: 'bg-transparent',
@@ -53,9 +46,21 @@
 		rounded: 'rounded-xl'
 	};
 
-	const openDrawer = () => {
-		console.log('Opening drawer');
-		drawerStore.open(drawerSettings);
+	const drawerSettingsA: DrawerSettings = {
+		id: 'call',
+		bgDrawer: 'variant-filled-surface text-white',
+		bgBackdrop: 'bg-transparent',
+		width: 'w-[80%]',
+		height: '100%',
+		padding: 'p-1',
+		rounded: 'rounded-xl'
+	};
+
+	const openDrawerVersions = () => {
+		drawerStore.open(drawerSettingsV);
+	};
+	const openDrawerAiCall = () => {
+		drawerStore.open(drawerSettingsA);
 	};
 </script>
 
@@ -69,10 +74,11 @@
 				<option value={topic}>{topic}</option>
 			{/each}
 		</select>
-		<button class="btn variant-ghost" onclick={openDrawer}>Versions</button>
+		<button class="btn variant-ghost" onclick={openDrawerVersions}>Versions</button>
+		<button class="btn variant-ghost" onclick={openDrawerAiCall}>AI-call</button>
 	</div>
-	<br>
+	<br />
 	<div class="">
-		<input type="text">
+		<input type="text" />
 	</div>
 </div>

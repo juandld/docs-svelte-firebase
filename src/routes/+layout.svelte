@@ -8,6 +8,7 @@
 	import AuthButtons from '$lib/components/AuthButtons.svelte';
 	import LoginForm from '$lib/components/LoginForm.svelte';
 	import VersionList from '$lib/components/VersionList.svelte';
+	import Convo from '$lib/components/Convo.svelte';
 
 	// Floating UI for Popups
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
@@ -22,6 +23,7 @@
 	initializeStores();
 	
 	const drawerStore = getDrawerStore();
+
 </script>
 
 <!-- App Shell -->
@@ -58,16 +60,21 @@
 			</AppBar>
 		
 	{/snippet}
-
+	
 	<Drawer position="right">
 		{#if $drawerStore.id === 'login'}
 			<LoginForm />
 		{:else if $drawerStore.id === 'version'}
 			<VersionList />
+		{:else if $drawerStore.id === 'call'}
+			<Convo/>
 		{:else}
+			<br>
 			<p>You acheived quite the error</p>
 		{/if}
 	</Drawer>
+
+
 	<!-- Page Route Content -->
 	{@render children?.()}
 </AppShell>
