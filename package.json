@@ -42,6 +42,7 @@
   "type": "module",
   "dependencies": {
     "@floating-ui/dom": "1.6.10",
+    "@google/generative-ai": "^0.21.0",
     "firebase": "^10.13.0"
   }
 }

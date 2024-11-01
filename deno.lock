@@ -1,7 +1,10 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@std/assert@*": "1.0.6",
+    "jsr:@std/internal@^1.0.4": "1.0.4",
     "npm:@floating-ui/dom@1.6.10": "1.6.10",
+    "npm:@google/generative-ai@0.21": "0.21.0",
     "npm:@skeletonlabs/skeleton@2.10.2": "2.10.2_svelte@4.2.19",
     "npm:@skeletonlabs/tw-plugin@0.4.0": "0.4.0_tailwindcss@3.4.10__postcss@8.4.41",
     "npm:@sveltejs/adapter-auto@3": "3.3.0_@sveltejs+kit@2.7.2__@sveltejs+vite-plugin-svelte@4.0.0___svelte@5.1.2____acorn@8.13.0___vite@5.4.10____@types+node@22.4.0____sass@1.80.4____sass-embedded@1.80.4___@types+node@22.4.0___sass@1.80.4___sass-embedded@1.80.4__svelte@5.1.2___acorn@8.13.0__vite@5.4.10___@types+node@22.4.0___sass@1.80.4___sass-embedded@1.80.4__@types+node@22.4.0__sass@1.80.4__sass-embedded@1.80.4_@sveltejs+vite-plugin-svelte@4.0.0__svelte@5.1.2___acorn@8.13.0__vite@5.4.10___@types+node@22.4.0___sass@1.80.4___sass-embedded@1.80.4__@types+node@22.4.0__sass@1.80.4__sass-embedded@1.80.4_svelte@5.1.2__acorn@8.13.0_vite@5.4.10__@types+node@22.4.0__sass@1.80.4__sass-embedded@1.80.4_@types+node@22.4.0_sass@1.80.4_sass-embedded@1.80.4",
@@ -29,6 +32,17 @@
     "npm:typescript@^5.5.0": "5.6.3",
     "npm:vite-plugin-tailwind-purgecss@0.3.3": "0.3.3_tailwindcss@3.4.10__postcss@8.4.41_vite@5.4.10__@types+node@22.4.0__sass@1.80.4__sass-embedded@1.80.4_@types+node@22.4.0_sass@1.80.4_sass-embedded@1.80.4",
     "npm:vite@^5.4.4": "5.4.10_@types+node@22.4.0_sass@1.80.4_sass-embedded@1.80.4"
+  },
+  "jsr": {
+    "@std/assert@1.0.6": {
+      "integrity": "1904c05806a25d94fe791d6d883b685c9e2dcd60e4f9fc30f4fc5cf010c72207",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    },
+    "@std/internal@1.0.4": {
+      "integrity": "62e8e4911527e5e4f307741a795c0b0a9e6958d0b3790716ae71ce085f755422"
+    }
   },
   "npm": {
     "@alloc/quick-lru@5.2.0": {
@@ -550,6 +564,9 @@
     },
     "@floating-ui/utils@0.2.8": {
       "integrity": "sha512-kym7SodPp8/wloecOpcmSnWJsK7M0E5Wg8UcFA+uO4B9s5d0ywXOEro/8HM9x0rW+TljRzul/14UYz3TleT3ig=="
+    },
+    "@google/generative-ai@0.21.0": {
+      "integrity": "sha512-7XhUbtnlkSEZK15kN3t+tzIMxsbKm/dSkKBFalj+20NvPKe1kBY7mR2P7vuijEn+f06z5+A8bVGKO0v39cr6Wg=="
     },
     "@grpc/grpc-js@1.9.15": {
       "integrity": "sha512-nqE7Hc0AzI+euzUwDAy0aY5hCp10r734gMGRdU+qOPX0XSceI2ULrcXB5U2xSc5VkWwalCj4M7GzCAygZl2KoQ==",
@@ -2510,6 +2527,7 @@
     "packageJson": {
       "dependencies": [
         "npm:@floating-ui/dom@1.6.10",
+        "npm:@google/generative-ai@0.21",
         "npm:@skeletonlabs/skeleton@2.10.2",
         "npm:@skeletonlabs/tw-plugin@0.4.0",
         "npm:@sveltejs/adapter-auto@3",
