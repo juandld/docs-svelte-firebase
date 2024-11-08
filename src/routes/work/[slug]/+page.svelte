@@ -25,9 +25,7 @@
 	});
 
 	// Reactive sync to local and Firebase
-	$effect(() => {
-		console.log("Value changed: " + value);
-		
+	$effect(() => {		
 		chamofileEditor.saveToLocalStorage(value);
 		chamofileEditor.debouncedSaveToFirebase(value, docID, title, topics);
 	});

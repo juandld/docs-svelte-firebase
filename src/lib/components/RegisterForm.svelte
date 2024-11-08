@@ -52,13 +52,15 @@
 			}
 		}
 	};
+
+	
 </script>
 
 {#if popupMessage}
 	<AuthPopup {popupMessage} />
 {/if}
 <div class="card variant-ghost-surface w-full p-4 flex justify-center items-center flex-col">
-	<form class="grid grid-cols-1 gap-2" onsubmit={preventDefault(submit)}>
+	<form class="grid grid-cols-1 gap-2" onsubmit={(submit)}>
 		<label class="label">
 			<span>Email</span>
 			<input

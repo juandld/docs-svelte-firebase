@@ -14,6 +14,7 @@
 		posts: { 
 			title: string 
 			updatedAt: Timestamp
+			postID: string
 		}[];
 	};
 	}
@@ -42,8 +43,7 @@
 		<h2>{data.userDetails.username}'s Chamofiles</h2>
 		<div>
 			{#each data.posts as post}
-				<a href="#">
-					<div class="card variant-ghost-surface w-1/2">
+			<a href={"/work/" + post.postID} onclick={() => goto("/work/" + post.postID)}>					<div class="card variant-ghost-surface w-1/2">
 						<h3 class="h3">{post.title}</h3>
 						<p>Last updated: {post.updatedAt}</p>
 					</div>
