@@ -1,0 +1,7 @@
+{
+    "imports": {
+      "$app/": "./node_modules/@sveltejs/kit/",
+      "svelte": "https://esm.sh/svelte@4.2.12",
+      "svelte/": "https://esm.sh/svelte@4.2.12/"
+    }
+  }

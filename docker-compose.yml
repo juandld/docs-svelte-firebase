@@ -1,0 +1,16 @@
+# docker-compose.yml
+version: '3.8'
+services:
+  sveltekit-deno:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - deno-cache:/deno-dir
+    environment:
+      - DENO_DIR=/deno-dir
+    command: deno run -A --node-modules-dir npm:vite dev --host
+
+volumes:
+  deno-cache:

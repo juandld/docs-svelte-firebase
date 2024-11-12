@@ -32,6 +32,7 @@
     "npm:typescript-eslint@8": "8.11.0_@typescript-eslint+parser@8.11.0__eslint@9.13.0__typescript@5.6.3_eslint@9.13.0_typescript@5.6.3",
     "npm:typescript@^5.5.0": "5.6.3",
     "npm:vite-plugin-tailwind-purgecss@0.3.3": "0.3.3_tailwindcss@3.4.10__postcss@8.4.41_vite@5.4.10__@types+node@22.4.0__sass@1.80.4__sass-embedded@1.80.4_@types+node@22.4.0_sass@1.80.4_sass-embedded@1.80.4",
+    "npm:vite@*": "5.4.10_@types+node@22.4.0_sass@1.80.4_sass-embedded@1.80.4",
     "npm:vite@^5.4.4": "5.4.10_@types+node@22.4.0_sass@1.80.4_sass-embedded@1.80.4"
   },
   "jsr": {
