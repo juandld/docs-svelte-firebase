@@ -7,65 +7,74 @@
 	//My components
 	import AuthButtons from '$lib/components/AuthButtons.svelte';
 	import LoginForm from '$lib/components/LoginForm.svelte';
-
-
-	// Highlight JS
-	import hljs from 'highlight.js/lib/core';
-	import 'highlight.js/styles/github-dark.css';
-	import { storeHighlightJs } from '@skeletonlabs/skeleton';
-	import xml from 'highlight.js/lib/languages/xml'; // for HTML
-	import css from 'highlight.js/lib/languages/css';
-	import javascript from 'highlight.js/lib/languages/javascript';
-	import typescript from 'highlight.js/lib/languages/typescript';
-
-	hljs.registerLanguage('xml', xml); // for HTML
-	hljs.registerLanguage('css', css);
-	hljs.registerLanguage('javascript', javascript);
-	hljs.registerLanguage('typescript', typescript);
-	storeHighlightJs.set(hljs);
+	import VersionList from '$lib/components/VersionList.svelte';
+	import Convo from '$lib/components/Convo.svelte';
 
 	// Floating UI for Popups
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
-
+	
 	initializeStores();
-
-	let loggedIn = false;
-	let user = null;
+	
 	const drawerStore = getDrawerStore();
+
 </script>
 
 <!-- App Shell -->
 <AppShell>
-	<svelte:fragment slot="header">
-		<!-- App Bar -->
-		<AppBar>
-			<svelte:fragment slot="lead">
-				<a href="/">
-					<strong class="text-xl uppercase">Skeleton</strong>
-				</a>
-			</svelte:fragment>
-			<svelte:fragment>
-				<a
-					class="btn btn-sm variant-ghost-surface"
-					href="https://github.com/juandld"
-					target="_blank"
-					rel="noreferrer"
-				>
-					GitHub
-				</a>
-			</svelte:fragment>
+	{#snippet header()}
+	
+			<!-- App Bar -->
+			<AppBar>
+				{#snippet lead()}
+					
+						<a href="/">
+							<strong class="text-xl uppercase">Skeleton</strong>
+						</a>
+					
+					{/snippet}
+				{#snippet children()}
+					
+						<a
+							class="btn btn-sm variant-ghost-surface"
+							href="https://github.com/juandld"
+							target="_blank"
+							rel="noreferrer"
+						>
+							GitHub
+						</a>
+					
+					{/snippet}
 
-			<svelte:fragment slot="trail">
-				<AuthButtons />
-			</svelte:fragment>
-		</AppBar>
-	</svelte:fragment>
-
+				{#snippet trail()}
+					
+						<AuthButtons />
+					
+					{/snippet}
+			</AppBar>
+		
+	{/snippet}
+	
 	<Drawer position="right">
-		<LoginForm/>
+		{#if $drawerStore.id === 'login'}
+			<LoginForm />
+		{:else if $drawerStore.id === 'version'}
+			<VersionList />
+		{:else if $drawerStore.id === 'call'}
+			<Convo/>
+		{:else}
+			<br>
+			<p>You acheived quite the error</p>
+		{/if}
 	</Drawer>
+
+
 	<!-- Page Route Content -->
-	<slot />
+	{@render children?.()}
 </AppShell>

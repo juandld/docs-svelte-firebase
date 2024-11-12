@@ -1,59 +1,55 @@
 <script lang="ts">
-	import { popup } from '@skeletonlabs/skeleton';
-	import type { PopupSettings } from '@skeletonlabs/skeleton';
-	import { authHandlers } from '$lib/util/authHandlers';
-	import { getDocwID } from '$lib/util/queryHandle';
-	import { authStore } from '$lib/stores/authStore';
+	import { preventDefault } from 'svelte/legacy';
+
+	import { authHandlers } from '$lib/util/auth/authHandle';
+	import { getUserByID } from '$lib/util/auth/userQueryHandle';
 	import { goto } from '$app/navigation';
+	import AuthPopup from '$lib/components/mini/AuthPopup.svelte';
 
-	const popupClick: PopupSettings = {
-		event: 'click',
-		target: 'popupClick',
-		placement: 'bottom'
-	};
 
-	interface User {
-		uid: string;
-		email: string | null;
-	}
-
-	interface DbResponse {
-		username: string;
-		fullName: string;
-		uid: string;
-		email: string;
-	}
-
-	let message = '';
-	let email = '';
-	let password = '';
-	let error = false;
+	let popupMessage = $state('');
+	let email = $state('');
+	let password = $state('');
+	let error = $state(false);
 
 	const submit = async () => {
 		if (email === '' || password === '') {
 			error = true;
-			message = 'Please enter an email and password';
+			popupMessage = 'Please enter an email and password';
 			return;
 		}
 
 		try {
 			// Loging in with email and password
 			const response = await authHandlers.login(email, password);
-			//Updating authStore for state management
-			authStore.set({ currentUser: { uid: response.user.uid, email: response.user.email } });
 			// Get the user's username from the database
-			const dbResponse = await getDocwID(response.user.uid);
+			const dbResponse = await getUserByID(response.user.uid);
 			// Redirect to user profile
-			if (!dbResponse) {
-				const redirect = dbResponse
-				console.log(redirect)
-				goto(`/${redirect}`);
+			if (dbResponse) {
+				const promise = await dbResponse;
+				const data = promise.data();
+				if (data) {
+					const redirect = data.username; // Get the username from the data
+					goto(`/${redirect}`);
+				}
 			}
 		} catch (error) {
 			// Handle Firebase Auth errors
 			if (error instanceof Error) {
 				// Type guard to ensure error is an Error object
-				message = error.message;
+				switch (error.message) {
+					case 'Firebase: Error (auth/invalid-email).':
+						popupMessage = 'Invalid email address';
+						break;
+					case 'Firebase: Error (auth/user-not-found).':
+						popupMessage = 'User not found';
+						break;
+					case 'Firebase: Error (auth/wrong-password).':
+						popupMessage = 'Check your password';
+						break;
+					default:
+						popupMessage = error.message;
+				}
 			}
 		}
 	};
@@ -78,14 +74,16 @@
 		</label>
 		<button
 			class="btn variant-filled-primary"
-			use:popup={popupClick}
-			on:click|preventDefault={submit}>Submit</button
+			onclick={preventDefault(submit)}>Submit</button
 		>
 		{#if !error}
 			<div class="card p-4 variant-filled-error" data-popup="popupClick">
-				<p>{message}</p>
-				<div class="arrow variant-filled-error" />
+				<p>{popupMessage}</p>
+				<div class="arrow variant-filled-error"></div>
 			</div>
 		{/if}
 	</form>
+	{#if popupMessage}
+		<AuthPopup {popupMessage} />
+	{/if}
 </div>

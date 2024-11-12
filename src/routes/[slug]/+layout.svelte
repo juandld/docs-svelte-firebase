@@ -1,54 +1,37 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { authStore } from '$lib/stores/authStore';
-	import { auth } from '$lib/util/firebase';
-	import { onAuthStateChanged } from 'firebase/auth';
+	import { authHandlers } from '$lib/util/auth/authHandle';
+	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
+	import { authStore } from '$lib/stores/authStore';
+	import type { User } from '$lib/types/user';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
+
 	
 	onMount(() => {
-		console.log("1");
-		const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-			if (firebaseUser) {
-				console.log("Congrats, logged in!");
-			} else {
-				console.log("Not logged in");
+		if (browser) {
+			const unsubscribe = authHandlers.authstatus((user: User) => {
 				authStore.update((curr) => ({
 					...curr,
 					isLoading: false,
-					currentUser: null
+					currentUser: user
 				}));
-			}
-			
-			if (
-				browser &&
-				!$authStore.currentUser &&
-				window.location.pathname !== '/'
-			) {
-				console.log("2");
-				//window.location.href = '/';
-				
-				console.log($authStore.currentUser);
-			}
-		});
-		return unsubscribe;
+
+				if (!user && window.location.pathname !== '/') {
+					goto('/');
+				}
+			});
+
+			return unsubscribe; // Ensure the unsubscribe function is returned synchronously for cleanup
+		}
 	});
-
-
+	
 </script>
 
-<main class="mainContainer flex justify-center flex-col">
-	<h2 class="h2">This is the layout</h2>
-	<slot />
-</main>
-
-<style>
-	.mainContainer {
-		min-height: 100vh;
-		display: flex;
-		flex-direction: column;
-	}
-</style>
-
-<main class="mainContainer">
-	<slot />
+<main class="p-10">
+	{@render children?.()}
 </main>
