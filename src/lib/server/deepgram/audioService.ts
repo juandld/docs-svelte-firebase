@@ -5,19 +5,17 @@ export class AudioService {
     private client: any;
     private connection: any;
     public isOpen = false;
-    public transcriptStore: string = '';
+    private transcriptBuffer: string = '';
+    private processingInterval: NodeJS.Timeout | null = null;
 
     constructor(apiKey: string) {
         this.apiKey = apiKey;
         
-        // Check for placeholder API key
         if (this.apiKey === 'defaultApiKey') {
             console.error("Warning: Using default API key. Please set the DEEPGRAM_API_KEY environment variable.");
         }
-
         this.client = createClient(this.apiKey);
     }
-
 
     async toggleCall() {
         if (this.isOpen) {
@@ -40,12 +38,20 @@ export class AudioService {
             this.connection.on(LiveTranscriptionEvents.Open, () => {
                 console.log('Connection opened');
                 this.isOpen = true;
+                
+                // Start periodic sending of transcripts
+                this.processingInterval = setInterval(async () => {
+                    if (this.transcriptBuffer.trim()) {
+                        await this.sendTranscriptToMicroservice(this.transcriptBuffer);
+                        this.transcriptBuffer = '';
+                    }
+                }, 2000); // Send every 2 seconds if there's content
             });
 
             this.connection.on(LiveTranscriptionEvents.Transcript, (transcript: LiveTranscriptionEvent) => {
                 const words = transcript.channel?.alternatives[0]?.transcript || '';
                 if (transcript.is_final) {
-                    this.transcriptStore += words + ' ';
+                    this.transcriptBuffer += words + ' ';
                 }
             });
 
@@ -56,6 +62,10 @@ export class AudioService {
             this.connection.on(LiveTranscriptionEvents.Close, () => {
                 console.log('Connection closed');
                 this.isOpen = false;
+                if (this.processingInterval) {
+                    clearInterval(this.processingInterval);
+                    this.processingInterval = null;
+                }
             });
         } catch (error) {
             console.error('Failed to start transcription:', error);
@@ -65,9 +75,41 @@ export class AudioService {
 
     private async stopTranscription() {
         if (this.connection) {
+            // Send any remaining transcript before closing
+            if (this.transcriptBuffer.trim()) {
+                await this.sendTranscriptToMicroservice(this.transcriptBuffer);
+                this.transcriptBuffer = '';
+            }
+            
             await this.connection.finish();
             this.connection = null;
             this.isOpen = false;
+            
+            if (this.processingInterval) {
+                clearInterval(this.processingInterval);
+                this.processingInterval = null;
+            }
+        }
+    }
+
+    private async sendTranscriptToMicroservice(transcript: string) {
+        try {
+            const response = await fetch('http://localhost:5000/chunking', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ transcript }),
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error('Error sending transcript to microservice:', error);
+            throw error;
         }
     }
 
@@ -82,6 +124,6 @@ export class AudioService {
     }
 
     clearTranscript() {
-        this.transcriptStore = '';
+        this.transcriptBuffer = '';
     }
 }
